@@ -1,13 +1,12 @@
 <template>
   <div>
-    <tag v-for="tag in tags" :key="tag" @removeTag="removeTag" :tagText="tag"></tag>
-    <span v-if="!isTagInputVisible" class="add-tag-text" @click="addTag">Add tag</span>
-    <div class="tag-input-container" v-if="isTagInputVisible">
-      <input ref="tagInput"  class ="add-tag-input" v-model="newTag" @keydown.enter.stop.prevent="pushTag(newTag)" type="text">
-      <ul class="tag-options">
-        <li v-for="tag in filteredTagOptions" @click="pushTag(tag)" :key="tag">{{tag}}</li>
-      </ul>
+    <div class="tag-flex-container">
+        <tag v-for="tag in tags" :key="tag" @removeTag="removeTag" :tagText="tag"></tag>
+        <input placeholder="Add tag" ref="tagInput" v-model="newTag" @keydown.enter.stop.prevent="pushTag(newTag)" @keydown="handleKeydown" type="text" size="1" class="tag-input">
     </div>
+    <ul class="tag-options">
+      <li v-for="tag in filteredTagOptions" @click="pushTag(tag)" :key="tag">{{tag}}</li>
+    </ul>
   </div>
 </template>
 
@@ -27,13 +26,10 @@ export default {
       isTagInputVisible: false
     }
   },
-  mounted () {
-    this.filteredTagOptions = this.tagOptions
-  },
   watch: {
     newTag (newVal) {
       if (newVal === '') {
-        this.filteredTagOptions = this.tagOptions
+        this.filteredTagOptions = []
       } else {
         const filterOptions = []
         this.tagOptions.forEach(tag => {
@@ -68,45 +64,46 @@ export default {
     removeTag (tagText) {
       const index = this.tags.indexOf(tagText)
       this.tags.splice(index, 1)
+    },
+    handleKeydown (e) {
+      if (e.key === 'Backspace') {
+        if (this.newTag === '') {
+          if (this.tags.length === 0) {
+            return
+          }
+          this.tags.pop()
+        }
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-.add-tag-text {
-  background-color: rgba(239,246,252,1);
-  font-size: 12px;
+.tag-flex-container {
+  max-width: 450px;
+  display: flex;
   padding: 4px;
-  color: rgba(0,0,0,.55);
-  cursor: pointer;
+  flex-wrap: wrap;
+  border: 1px solid #8b9396;
 }
 
-.add-tag-text:hover {
-  background-color: rgba(206,229,248,1)
+.tag-flex-container > .tag-input {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    min-width: 100px;
+    border: none;
+    padding: 0px;
+    margin: 6px;
 }
-.tag-input-container {
-  display: inline-block;
-  padding-left: 6px;
-  font-size: 12px;
-  color: rgba(0,0,0,.55);
-  width: 150px;
-}
-.add-tag-input {
-    padding-left: 2px;
-    font-size: 12px;
-    color: rgba(0,0,0,.55);
-    width: 146px;
-    overflow: hidden;
-    margin: 0;
-    outline: none;
-    border: 1px solid;
-    border-color: rgba(200,200,200,1);
-    border-color: rgba(var(--palette-neutral-20,200, 200, 200),1);
-    background-color:  rgba(239,246,252,1);
+
+.tag-flex-container > .tag-input:focus{
+  outline: none;
 }
 
 .tag-options {
+  max-width: 450px;
   list-style: none;
   text-align: left;
   padding-left: 8px;
@@ -115,20 +112,9 @@ export default {
   border-color: rgba(200,200,200,1);
   margin-top: 0px;
   border-color: rgba(var(--palette-neutral-20,200, 200, 200),1);
+  font-size: 13px;
 }
 
-.tag-options > option {
-  color: rgba(0,0,0,.55);
-  width: 146px;
-  background-color: rgba(239,246,252,1);
-}
-
-datalist{
-  font-weight: 12px;
-  color: rgba(0,0,0,.55);
-  width: 146px;
-  background-color: rgba(239,246,252,1);
-}
 .tag-options > li {
   margin-top: 2px;
   margin-bottom: 2px;
@@ -136,13 +122,5 @@ datalist{
 
 .tag-options > li:hover {
   background-color: rgba(239,246,252,1);
-}
-
-.plus-sign {
-  background-color: rgba(239,246,252,1);
-  font-size: 12px;
-  padding: 4px;
-  color: rgba(0,0,0,.55);
-  cursor: pointer;
 }
 </style>

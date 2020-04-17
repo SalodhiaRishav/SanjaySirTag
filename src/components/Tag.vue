@@ -1,7 +1,7 @@
 <template>
-  <span>
+  <div class="tag">
     <span class="tag-text">{{tagText}} <span class="tag-cross" @click = "removeTag(tagText)">X</span></span>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -21,24 +21,27 @@ export default {
 </script>
 
 <style scoped>
+.tag {
+    background-color: rgba(239,246,252,1);
+    padding: 4px;
+    text-align: center;
+    color: rgba(0,0,0,.55);
+    margin: 6px;
+    line-height: 12px;
+}
 .tag-text {
-  vertical-align: text-top;
-  vertical-align: top;
-  background-color: rgba(239,246,252,1);
   font-size: 12px;
-  padding: 4px;
-  color: rgba(0,0,0,.55);
-  margin-right: 10px;
 }
 
 .tag-cross {
   cursor: pointer;
-  font-size: 10px;
+  font-size: 9px;
+  margin-left: 8px;
 }
 
 .tag-cross:hover {
   color: black;
-  font-size: 12px;
+  font-size: 10px;
 }
 
 </style>
